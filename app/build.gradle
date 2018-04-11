@@ -292,7 +292,7 @@ tinkerPatch {
         /**
          * patch version via packageConfig
          */
-        configField("patchVersion", "1.0")
+        configField("patchVersion", getPatchVersion())
     }
     //or you can add config filed outside, or get meta value from old apk
     //project.tinkerPatch.packageConfig.configField("test1", project.tinkerPatch.packageConfig.getMetaDataFromOldApk("Test"))
