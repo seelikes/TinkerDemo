@@ -1,10 +1,12 @@
 package com.ltt.android.sites.tinker.demo;
 
+import android.Manifest;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Process;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,6 +14,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
+
+import com.java.lib.oil.file.FileUtils;
+import com.tencent.tinker.lib.tinker.Tinker;
+import com.tencent.tinker.lib.tinker.TinkerInstaller;
+import com.tencent.tinker.lib.util.TinkerLog;
+import com.tencent.tinker.loader.shareutil.ShareTinkerInternals;
+import com.yanzhenjie.permission.AndPermission;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -40,6 +53,16 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        AndPermission.with(this)
+                .permission(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .send();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Toast.makeText(this, "100", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -97,5 +120,36 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void onLoadPatch(View view) {
+        File patchFile = FileUtils.getInstance().locateFile(Environment.getExternalStorageDirectory(), "patch", "patch_signed_7zip.apk");
+        TinkerLog.i(MainActivity.class.getSimpleName(), "onLoadPatch.UL0112LP.DI1211, patchFile.exists(): " + patchFile.exists());
+        if (patchFile.exists()) {
+            TinkerInstaller.onReceiveUpgradePatch(getApplicationContext(), patchFile.getAbsolutePath());
+        }
+        else {
+            Toast.makeText(this, R.string.activity_main_load_patch_error, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void onCleanPatch(View view) {
+        TinkerLog.i(MainActivity.class.getSimpleName(), "onCleanPatch.UL0112LP.DI1211, enter.");
+        Tinker.with(getApplicationContext()).cleanPatch();
+        File patchFile = FileUtils.getInstance().locateFile(Environment.getExternalStorageDirectory(), "patch", "patch_signed_7zip.apk");
+        if (patchFile.exists()) {
+            if (patchFile.delete()) {
+                Toast.makeText(this, R.string.activity_main_clean_patch_success, Toast.LENGTH_LONG).show();
+            }
+            else {
+                Toast.makeText(this, R.string.activity_main_clean_patch_fail, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    public void onKillSelf(View view) {
+        TinkerLog.i(MainActivity.class.getSimpleName(), "onKillSelf.UL0112LP.DI1211, enter.");
+        ShareTinkerInternals.killAllOtherProcess(getApplicationContext());
+        Process.killProcess(Process.myPid());
     }
 }

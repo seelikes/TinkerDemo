@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TinkerDemo</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -6,4 +7,11 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+
+    <string name="content_main_load_patch">加载补丁</string>
+    <string name="content_main_clean_patch">清除补丁</string>
+    <string name="content_main_kill_self">退出</string>
+    <string name="activity_main_load_patch_error">补丁文件不存在</string>
+    <string name="activity_main_clean_patch_success">清除补丁文件成功</string>
+    <string name="activity_main_clean_patch_fail">清除补丁文件失败</string>
 </resources>
